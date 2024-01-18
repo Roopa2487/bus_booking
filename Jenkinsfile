@@ -1,29 +1,23 @@
 pipeline {
     agent {
-        label 'king'
+        label 'slave1'
     }
 
-    environment {
-        TOMCAT_HOST = '172.31.3.184'
-        TOMCAT_USER = 'root'
-        TOMCAT_DIR = '/opt/apache-tomcat-8.5.98/webapps'
-        JAR_FILE = 'bus-booking-app-1.0-SNAPSHOT.jar'  // Replace with the actual name of your JAR file
-    }
+   
 
-    stages {
+  stages {
         stage('checkout') {
             steps {
                 sh 'rm -rf bus_booking'
-                sh 'git clone https://github.com/sudhasanshi/bus_booking.git'
+                sh 'git clone https://github.com/Roopa2487/bus_booking.git'
             }
         }
 
         stage('build') {
             steps {
                 script {
-                    def mvnHome = tool 'Maven'
-                    def mvnCMD = "${mvnHome}/bin/mvn"
-                    sh "${mvnCMD} clean install"
+                    sh 'mvn --version'
+                    sh 'mvn clean install'
                 }
             }
         }
@@ -41,26 +35,22 @@ pipeline {
             steps {
                 script {
                     // Run the JAR file using java -jar
-                    sh "java -jar target/${JAR_FILE}"
+                    sh "nohup timeout 10s java -jar target/ > output.log 2>&1 &"
+                    // Sleep for a while to allow the application to start (adjust as needed)
+                    sleep 10
                 }
             }
         }
-
-        stage('Deploy JAR to Tomcat') {
+        
+        stage('deploy') {
             steps {
-                script {
-                    // Copy JAR to Tomcat server
-                    sh "scp target/${JAR_FILE} ${TOMCAT_USER}@${TOMCAT_HOST}:${TOMCAT_DIR}/"
-
-                    // SSH into Tomcat server and restart Tomcat
-                    sh "ssh ${TOMCAT_USER}@${TOMCAT_HOST} 'bash -s' < restart-tomcat.sh"
-
-                    echo "Application deployed and Tomcat restarted"
-                }
+                sh 'ssh root@172.31.15.241'
+                sh "scp /home/slave1/workspace/bus-booking-pipeline/target/bus-booking-app-1.0-SNAPSHOT.jar root@172.31.15.241:/opt/apache-tomcat-8.5.98/webapps/"
             }
         }
+        
     }
-
+        
     post {
         success {
             echo "Build, Run, and Deployment to Tomcat successful!"
