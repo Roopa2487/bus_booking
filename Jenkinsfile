@@ -16,17 +16,28 @@ pipeline {
         stage('build') {
             steps {
                 script {
-                     sh 'mvn --version'
-                     sh 'mvn clean install'
+                    sh 'mvn --version'
+                    sh 'mvn clean install'
                 }
             }
         }
 
-        stage('Run JAR') {
+        stage('Show Contents of target') {
             steps {
                 script {
-                    sh "java -jar target/bus-booking-app-1.0-SNAPSHOT.jar&"
-		    sleep 30
+                    // Print the contents of the target directory
+                    sh 'ls -l target'
+                }
+            }
+        }
+
+        stage('Run JAR Locally') {
+            steps {
+                script {
+                    // Run the JAR file using java -jar
+                    sh "nohup timeout 10s java -jar target/bus-booking-app-1.0-SNAPSHOT.jar > output.log 2>&1 &"
+                    // Sleep for a while to allow the application to start (adjust as needed)
+                    sleep 10
                 }
             }
         }
