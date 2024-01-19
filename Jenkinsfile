@@ -3,10 +3,7 @@ pipeline {
         label 'slave1'
     }
 
-    environment {
-        MAVEN_HOME = tool 'Maven'
-        //SPRING_PROFILES_ACTIVE = 'local'  
-    }
+   
 	
     stages {
         stage('checkout') {
@@ -19,7 +16,8 @@ pipeline {
         stage('build') {
             steps {
                 script {
-                     sh "${MAVEN_HOME}/bin/mvn clean package"
+                     sh 'mvn --version'
+                     sh 'mvn clean install'
                 }
             }
         }
