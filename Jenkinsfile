@@ -39,7 +39,7 @@ stage('Deploy to JFrog Artifactory') {
                         id: "Artifact",
                         url: "http://35.154.124.78:8081//artifactory",
                         username: "roopa",
-                        password: "Cristiano2021$"
+                        password: 'Cristiano2021$'
                     )
                 }
             }
