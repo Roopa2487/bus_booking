@@ -64,7 +64,7 @@ stage('Deploy to JFrog Artifactory') {
                             "files": [
                                 {
                                     "pattern": "target/*.jar",
-                                    "target": "libs-release-local/"
+                                    "target": "example-repo-local/"
                                 }
                             ]
                         }'''
